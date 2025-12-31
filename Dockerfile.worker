@@ -1,0 +1,20 @@
+FROM python:3.11-slim
+WORKDIR /app
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
+RUN apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    ffmpeg \
+    espeak-ng \
+    && rm -rf /var/lib/apt/lists/*
+# Install project dependencies via editable installs (aligned with CI)
+COPY libs /app/libs
+COPY prompts /app/prompts
+COPY services/worker /app/services/worker
+COPY services/api /app/services/api
+RUN pip install --no-cache-dir \
+    redis \
+    prometheus-client \
+    opentelemetry-sdk opentelemetry-exporter-otlp-proto-http \
+    -e /app/libs/contracts -e /app/libs/podcast -e /app/services/api -e /app/services/worker
+WORKDIR /app/services/worker
+CMD ["python", "-m", "podcastify_worker.main"]

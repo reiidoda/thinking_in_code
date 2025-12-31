@@ -1,0 +1,65 @@
+services:
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+  ollama:
+    image: ollama/ollama
+    container_name: ollama
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    environment:
+      - OLLAMA_NUM_PARALLEL=1
+      - OLLAMA_MAX_LOADED_MODELS=1
+    volumes:
+      - ollama-data:/root/.ollama
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    environment:
+      - DATA_DIR=/data
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - OLLAMA_MODEL=llama3:8b
+      - VECTOR_STORE_PROVIDER=chroma
+      - QUEUE_MODE=redis
+      - QUEUE_REDIS_URL=redis://redis:6379/0
+      - API_KEY=${API_KEY:-}
+      - LOG_FORMAT=json
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+      - ollama
+    volumes:
+      - ./data:/data
+      - ./services/api/static:/app/services/api/static:ro
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+    environment:
+      - DATA_DIR=/data
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - OLLAMA_MODEL=llama3:instruct
+      - OLLAMA_FALLBACK_MODEL=llama3:8b
+      - OLLAMA_NUM_PREDICT=256
+      - OLLAMA_FALLBACK_NUM_PREDICT=256
+      - EMBEDDING_PROVIDER=ollama
+      - QUEUE_MODE=redis
+      - QUEUE_REDIS_URL=redis://redis:6379/0
+      - QUEUE_REDIS_KEY=podcastify:jobs
+      - TOPIC_RESEARCH_DIR=/data/research
+      - TOPIC_RESEARCH_TOP_K_FILES=1
+      - MAX_CONTEXT_CHARS=8000
+      - METRICS_ENABLED=true
+      - METRICS_PORT=9000
+      - LOG_FORMAT=json
+    depends_on:
+      - redis
+      - ollama
+    volumes:
+      - ./data:/data
+volumes:
+  ollama-data:

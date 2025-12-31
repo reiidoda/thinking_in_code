@@ -1,0 +1,24 @@
+[project]
+name = "podcastify-worker"
+version = "0.1.0"
+description = "Thinking in Code worker service."
+requires-python = ">=3.11"
+dependencies = [
+  "python-dotenv>=1.0",
+  "redis>=5.0",
+  "prometheus-client>=0.20",
+  "opentelemetry-sdk>=1.24",
+  "opentelemetry-exporter-otlp-proto-http>=1.24",
+  "podcastify-contracts>=0.1.0",
+  "podcastify-podcast>=0.1.0",
+]
+
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]

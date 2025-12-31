@@ -1,0 +1,11 @@
+FROM python:3.11-slim
+WORKDIR /app
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
+
+COPY libs /app/libs
+COPY services/api /app/services/api
+
+RUN pip install --no-cache-dir -e /app/libs/contracts -e /app/services/api
+
+WORKDIR /app/services/api
+CMD ["uvicorn", "podcastify_api.main:app", "--host", "0.0.0.0", "--port", "8000"]

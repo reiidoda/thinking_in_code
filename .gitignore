@@ -1,0 +1,49 @@
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Python build + venv
+__pycache__/
+*.py[cod]
+*.pyo
+*.so
+.venv/
+venv/
+.env
+.env.*
+.python-version
+
+# Tooling caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+
+# Packaging artifacts
+dist/
+build/
+.eggs/
+*.egg-info/
+pip-wheel-metadata/
+
+# Editors/IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Project runtime data
+data/*
+!data/.gitkeep
+!data/.keep
+!data/**/.gitkeep
+!data/**/.keep
+ollama-data/
+
+# Local docker/compose env
+.envrc
+

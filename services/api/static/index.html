@@ -1,0 +1,383 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Thinking in Code turns research PDFs into clear, cited podcast audio." />
+  <title>Thinking in Code</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+  <script defer src="/static/app.js"></script>
+</head>
+<body>
+  <header class="nav" id="nav">
+    <div class="nav-inner">
+      <a class="logo" href="#top" aria-label="Thinking in Code">
+        <img src="/assets/thinking_in_code_icon.png" alt="Thinking in Code" />
+        <span>Thinking in Code</span>
+      </a>
+      <nav class="nav-links">
+        <a href="#product">Product</a>
+        <a href="#how">How it works</a>
+        <a href="#evidence">Evidence</a>
+        <a href="#audio">Audio</a>
+        <a href="#studio">Studio</a>
+        <a href="#docs">Docs</a>
+        <a href="#feedback">Feedback</a>
+      </nav>
+      <div class="nav-cta">
+        <a class="btn small" href="#studio">Get started</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="container hero-inner">
+        <p class="eyebrow reveal">Research to podcast</p>
+        <h1 class="hero-title" data-headline>
+          Turn complex research into daily-life stories people remember.
+        </h1>
+        <p class="hero-sub reveal">
+          Upload PDFs. The API registers the job, the worker extracts and verifies the research,
+          and you receive a cited script, transcript, and optional narration with audio artifacts.
+        </p>
+        <div class="hero-ctas reveal">
+          <a class="btn primary" href="#studio">Create</a>
+          <a class="btn secondary" href="#how">Learn more</a>
+        </div>
+        <div class="hero-metrics reveal">
+          <div class="metric-item">
+            <span class="metric">PDF -> Script -> Audio</span>
+            <span class="metric-label">End-to-end pipeline</span>
+          </div>
+          <div class="metric-item">
+            <span class="metric">Cited output</span>
+            <span class="metric-label">Evidence-first narration</span>
+          </div>
+          <div class="metric-item">
+            <span class="metric">Local-first</span>
+            <span class="metric-label">Run on your machine</span>
+          </div>
+        </div>
+      </div>
+      <div class="hero-visual" id="product">
+        <div class="device reveal">
+          <img src="/assets/thinking_in_code.png" alt="Thinking in Code pipeline preview" />
+          <div class="device-glow"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="how">
+      <div class="container">
+        <div class="section-header reveal">
+          <h2>How it works</h2>
+          <p>
+            A traceable workflow that converts dense research into a listener-ready story
+            without compromising rigor or provenance. Each step produces artifacts you can inspect.
+          </p>
+        </div>
+        <div class="card-grid">
+          <div class="card reveal">
+            <span class="card-label">01</span>
+            <h3>Upload and ingest</h3>
+            <p>
+              Each PDF is parsed page-by-page and normalized for clean extraction. Citations
+              are preserved so every statement stays linked to the original evidence.
+            </p>
+          </div>
+          <div class="card reveal">
+            <span class="card-label">02</span>
+            <h3>Explain in daily-life terms</h3>
+            <p>
+              The script writer translates methods and results into plain-language analogies.
+              Citations stay attached to every segment so reviewers can validate the narrative.
+            </p>
+          </div>
+          <div class="card reveal">
+            <span class="card-label">03</span>
+            <h3>Deliver polished audio</h3>
+            <p>
+              Narration pacing adapts to cognitive load to keep dense material clear. The
+              final mix is normalized with transcripts and quality metadata.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section sticky-section" id="learn">
+      <div class="container sticky-grid">
+        <div class="sticky-copy">
+          <div class="section-header reveal">
+          <h2>Every step is clear</h2>
+          <p>
+            Keep the pipeline on screen while the episode builds, so you can see what is
+            happening and what comes next.
+          </p>
+          </div>
+          <div class="sticky-step reveal" data-step="0">
+            <h3>Ingest with citations</h3>
+            <p>We clean the text, split it into chunks, and keep page citations for each claim.</p>
+          </div>
+          <div class="sticky-step reveal" data-step="1">
+            <h3>Explain with analogies</h3>
+            <p>We turn methods and results into simple comparisons while keeping the evidence.</p>
+          </div>
+          <div class="sticky-step reveal" data-step="2">
+            <h3>Shape the listening arc</h3>
+            <p>We slow down for dense parts, speed up for summaries, and keep takeaways crisp.</p>
+          </div>
+        </div>
+        <div class="sticky-media reveal" data-active="0">
+          <div class="sticky-video">
+            <img src="/assets/thinking_in_code_loop.gif" alt="Thinking in Code pipeline animation" />
+          </div>
+          <div class="media-panel" data-step="0">
+            <div class="panel-title">Upload</div>
+            <div class="panel-body">
+              Extract pages, normalize text, and keep citation anchors attached.
+            </div>
+          </div>
+          <div class="media-panel" data-step="1">
+            <div class="panel-title">Explain</div>
+            <div class="panel-body">
+              Generate segments, keep sources linked, and track coverage.
+            </div>
+          </div>
+          <div class="media-panel" data-step="2">
+            <div class="panel-title">Deliver</div>
+            <div class="panel-body">
+              Adjust pacing, normalize loudness, export audio and transcripts.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section dark" id="evidence">
+      <div class="container">
+        <div class="section-header reveal">
+          <h2>Evidence-first by design</h2>
+          <p>
+            Every segment is grounded in the source. Uncertain claims are flagged, and quality
+            reports summarize coverage and confidence across the episode.
+          </p>
+        </div>
+        <div class="stat-grid">
+          <div class="stat reveal">
+            <div class="stat-number">100%</div>
+            <div class="stat-label">Segments linked to citations</div>
+          </div>
+          <div class="stat reveal">
+            <div class="stat-number">3-6</div>
+            <div class="stat-label">Core body segments per episode</div>
+          </div>
+          <div class="stat reveal">
+            <div class="stat-number">6-10 min</div>
+            <div class="stat-label">Target length for retention</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="audio">
+      <div class="container">
+        <div class="section-header reveal">
+          <h2>Audio engineered for clarity</h2>
+          <p>
+            The pacing model reads math density, lexical variety, and sentence length to set
+            speaking rate and pauses. Output is loudness-normalized, QA-scored, and exported
+            alongside transcripts and metadata for verification.
+          </p>
+        </div>
+        <div class="media-shell reveal">
+          <img class="media-image" src="/assets/thinking_in_code.png" alt="Adaptive pacing preview" />
+          <div class="media-overlay">
+            <div class="overlay-label">Adaptive pacing</div>
+            <div class="overlay-sub">Deliberate timing tuned for clarity, recall, and authority.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="docs">
+      <div class="container">
+        <div class="section-header reveal">
+          <h2>Developer-friendly by default</h2>
+          <p>
+            The API submits jobs, streams progress over SSE, and writes deterministic artifacts
+            to disk. The worker runs a clean-architecture pipeline (extract → chunk → script → optional
+            retrieval → TTS → audio assembly), while adapters keep LLMs, embeddings, and TTS providers
+            swappable without touching the core domain logic.
+          </p>
+        </div>
+        <div class="pill-row reveal">
+          <span>FastAPI + SSE</span>
+          <span>Ollama / OpenRouter</span>
+          <span>Chroma / FAISS</span>
+          <span>pyttsx3 / Piper / Minimax</span>
+          <span>Prometheus metrics</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section studio" id="studio">
+      <div class="container">
+        <div class="section-header reveal">
+          <h2>Studio</h2>
+          <p>Upload research, configure tone, and monitor jobs with artifact downloads in one place.</p>
+        </div>
+        <div class="studio-grid">
+          <div class="panel upload-panel reveal">
+            <h3>Upload a research PDF</h3>
+            <form class="form" data-upload-form>
+              <label class="drop-zone" data-drop-zone>
+                <input type="file" name="file" accept="application/pdf" required />
+                <span class="drop-title">Drop a research PDF here</span>
+                <span class="drop-sub">or click to browse</span>
+                <span class="drop-file" data-file-name>No file selected</span>
+              </label>
+              <div class="form-row">
+                <div class="form-field">
+                  <label for="language">Language</label>
+                  <select id="language" name="language" required>
+                    <option value="en">English (en)</option>
+                    <option value="es">Spanish (es)</option>
+                    <option value="fr">French (fr)</option>
+                    <option value="de">German (de)</option>
+                    <option value="it">Italian (it)</option>
+                    <option value="pt">Portuguese (pt)</option>
+                    <option value="pt-BR">Portuguese - Brazil (pt-BR)</option>
+                    <option value="ar">Arabic (ar)</option>
+                    <option value="hi">Hindi (hi)</option>
+                    <option value="zh">Chinese (zh)</option>
+                    <option value="ja">Japanese (ja)</option>
+                    <option value="ko">Korean (ko)</option>
+                    <option value="ru">Russian (ru)</option>
+                  </select>
+                </div>
+                <div class="form-field">
+                  <label for="style">Style</label>
+                  <select id="style" name="style">
+                    <option value="everyday">Everyday</option>
+                    <option value="academic">Academic</option>
+                    <option value="energetic_academic">Energetic academic</option>
+                    <option value="authoritative">Authoritative</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-field">
+                  <label for="minutes">Target minutes</label>
+                  <input id="minutes" name="target_minutes" type="number" min="1" max="60" value="8" />
+                </div>
+                <div class="form-field">
+                  <label for="seconds">Target seconds</label>
+                  <input id="seconds" name="target_seconds" type="number" min="0" max="59" value="0" />
+                </div>
+              </div>
+              <div class="form-field">
+                <label for="apiKey">API key (optional)</label>
+                <input id="apiKey" name="api_key" type="password" placeholder="x-api-key" />
+              </div>
+              <button class="btn primary" type="submit" data-upload-button>Generate episode</button>
+              <p class="form-note" data-upload-note>
+                PDFs stay local in <code>data/</code>. Jobs run on the worker.
+              </p>
+            </form>
+          </div>
+          <div class="panel status-panel reveal">
+            <div class="status-header">
+              <div>
+                <h3>Job status</h3>
+                <p class="status-sub">Clear progress from queue to final artifacts.</p>
+              </div>
+              <form class="lookup" data-lookup-form>
+                <input type="text" name="job_id" placeholder="Job ID" />
+                <button class="btn secondary small" type="submit">Load</button>
+              </form>
+            </div>
+            <div class="status-card" data-status-card>
+              <div class="status-meta">
+                <span class="status-pill" data-status-pill>Idle</span>
+                <span class="status-job" data-status-job>Job id appears here</span>
+              </div>
+              <div class="status-steps">
+                <div class="status-step" data-step="queued">Queued</div>
+                <div class="status-step" data-step="running">Processing</div>
+                <div class="status-step" data-step="succeeded">Complete</div>
+              </div>
+              <p class="status-detail" data-status-detail>Upload a PDF to begin.</p>
+            </div>
+            <div class="artifact-panel">
+              <div class="artifact-header">
+                <h4>Artifacts</h4>
+                <span class="artifact-meta" data-artifact-meta>No artifacts yet</span>
+              </div>
+              <ul class="artifact-list" data-artifact-list></ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="feedback">
+      <div class="container">
+        <div class="section-header reveal">
+          <h2>Feedback</h2>
+          <p>Tell us what to improve next. We use it to refine the flow, pacing, and narration quality.</p>
+        </div>
+        <div class="panel feedback-panel reveal">
+          <form class="form" data-feedback-form>
+            <div class="form-row">
+              <div class="form-field">
+                <label for="fbName">Name</label>
+                <input id="fbName" name="name" type="text" placeholder="Your name" />
+              </div>
+              <div class="form-field">
+                <label for="fbEmail">Email</label>
+                <input id="fbEmail" name="email" type="email" placeholder="you@example.com" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-field">
+                <label for="fbJob">Job ID (optional)</label>
+                <input id="fbJob" name="job_id" type="text" placeholder="job-xxxx" />
+              </div>
+              <div class="form-field">
+                <label for="fbContext">Context (optional)</label>
+                <input id="fbContext" name="context" type="text" placeholder="Upload flow, voice, pacing..." />
+              </div>
+            </div>
+            <div class="form-field">
+              <label for="fbMessage">Message</label>
+              <textarea id="fbMessage" name="message" rows="4" placeholder="Share what worked and what did not." required></textarea>
+            </div>
+            <button class="btn primary" type="submit" data-feedback-button>Send feedback</button>
+            <p class="form-note" data-feedback-note></p>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <section class="section cta" id="cta">
+      <div class="container cta-inner reveal">
+        <h2>Launch your first research-to-podcast run in minutes.</h2>
+        <p>Upload a PDF, start the worker, and stream progress in real time.</p>
+        <div class="hero-ctas">
+          <a class="btn primary" href="#studio">Create</a>
+          <a class="btn secondary" href="#docs">Read the docs</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <span>Thinking in Code</span>
+      <span>Complexity to Entertainment</span>
+    </div>
+  </footer>
+</body>
+</html>
