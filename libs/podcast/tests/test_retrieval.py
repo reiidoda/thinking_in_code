@@ -1,8 +1,8 @@
 from podcastify_contracts.podcast_job import Citation
 from podcastify_podcast.application.retrieval import RetrieveChunks
 from podcastify_podcast.domain.models import Chunk
-from podcastify_podcast.infrastructure.retrieval.local_store import LocalVectorStore
 from podcastify_podcast.infrastructure.retrieval.chroma_store import ChromaVectorStore
+from podcastify_podcast.infrastructure.retrieval.local_store import LocalVectorStore
 
 
 class DummyEmbedder:

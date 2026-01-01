@@ -5,22 +5,29 @@ import math
 import os
 import time
 from pathlib import Path
-from typing import List
-from podcastify_contracts.podcast_job import PodcastJobRequest, PodcastJobResult, JobStatus, EpisodeArtifact, EpisodeSegment
+
 from podcastify_contracts.errors import PipelineError
+from podcastify_contracts.podcast_job import (
+    EpisodeArtifact,
+    EpisodeSegment,
+    JobStatus,
+    PodcastJobRequest,
+    PodcastJobResult,
+)
+
 from podcastify_podcast.application.ports import (
-    PdfExtractor,
+    AudioAssembler,
     Chunker,
+    EmbeddingGenerator,
+    JobStore,
+    PdfExtractor,
     ScriptWriter,
     TtsSynthesizer,
-    AudioAssembler,
-    JobStore,
-    EmbeddingGenerator,
     VectorStore,
 )
 from podcastify_podcast.domain.models import Chunk
-from podcastify_podcast.infrastructure.logging import get_logger
 from podcastify_podcast.infrastructure.audio.pacing import segment_pause_multiplier_for
+from podcastify_podcast.infrastructure.logging import get_logger
 
 log = get_logger(__name__)
 
@@ -142,7 +149,9 @@ class GeneratePodcastFromPdf:
                     if meta_path:
                         artifacts.append(EpisodeArtifact(kind="audio_metadata", path=meta_path))
                     try:
-                        from podcastify_podcast.infrastructure.audio.audio_quality import AudioQualityChecker
+                        from podcastify_podcast.infrastructure.audio.audio_quality import (
+                            AudioQualityChecker,
+                        )
                     except Exception:
                         AudioQualityChecker = None  # type: ignore
                     if AudioQualityChecker:
@@ -193,7 +202,7 @@ class GeneratePodcastFromPdf:
             lines.append("")
         return "\n".join(lines)
 
-    def _chunks_debug(self, chunks: List[Chunk]) -> str:
+    def _chunks_debug(self, chunks: list[Chunk]) -> str:
         lines: list[str] = []
         for idx, ch in enumerate(chunks, start=1):
             lines.append(f"Chunk {idx}:")
@@ -205,7 +214,7 @@ class GeneratePodcastFromPdf:
             lines.append("")
         return "\n".join(lines)
 
-    def _chunks_json(self, chunks: List[Chunk]) -> str:
+    def _chunks_json(self, chunks: list[Chunk]) -> str:
         import json
         data = []
         for ch in chunks:
@@ -217,7 +226,7 @@ class GeneratePodcastFromPdf:
             )
         return json.dumps(data, indent=2)
 
-    def _apply_voice_profiles(self, segments: List[EpisodeSegment]) -> List[EpisodeSegment]:
+    def _apply_voice_profiles(self, segments: list[EpisodeSegment]) -> list[EpisodeSegment]:
         mapping = self._voice_profile_map()
         if not mapping:
             return segments
@@ -264,13 +273,13 @@ class GeneratePodcastFromPdf:
             return mapping[speaker_key]
         return mapping.get("default")
 
-    def _write_quality_artifacts(self, *, job_id: str, segments, chunks: List[Chunk], audio_quality: dict | None) -> None:
+    def _write_quality_artifacts(self, *, job_id: str, segments, chunks: list[Chunk], audio_quality: dict | None) -> None:
         quality = self._quality_report(segments, chunks, audio_quality=audio_quality)
         self.job_store.write_artifact(job_id=job_id, name="quality.json", content=quality.encode("utf-8"))
         quality_log = self._quality_log(segments, chunks)
         self.job_store.write_artifact(job_id=job_id, name="quality.log", content=quality_log.encode("utf-8"))
 
-    def _quality_report(self, segments, chunks: List[Chunk], *, audio_quality: dict | None = None) -> str:
+    def _quality_report(self, segments, chunks: list[Chunk], *, audio_quality: dict | None = None) -> str:
         chunk_tokens = [set(self._tokens(c.text)) for c in chunks]
         report = {
             "total_segments": len(segments),
@@ -335,7 +344,7 @@ class GeneratePodcastFromPdf:
         union = len(a | b)
         return inter / union if union else 0.0
 
-    def _quality_log(self, segments, chunks: List[Chunk]) -> str:
+    def _quality_log(self, segments, chunks: list[Chunk]) -> str:
         from podcastify_podcast.infrastructure.text.overlap import sentence_split
 
         chunk_tokens = [set(self._tokens(c.text)) for c in chunks]
@@ -391,7 +400,7 @@ class GeneratePodcastFromPdf:
         blended = 0.6 * logistic + 0.4 * hmean
         return (max(0.0, min(1.0, blended)), max(0.0, min(1.0, hmean)))
 
-    def _load_cached_embeddings(self, job_id: str, chunks: List[Chunk]) -> List[List[float]]:
+    def _load_cached_embeddings(self, job_id: str, chunks: list[Chunk]) -> list[list[float]]:
         import json
         from pathlib import Path
 
@@ -436,7 +445,7 @@ class GeneratePodcastFromPdf:
         millis = int((secs - int(secs)) * 1000)
         return f"{hours:02}:{minutes:02}:{int(secs):02},{millis:03}"
 
-    def _fallback_script(self, chunks: List[Chunk], style: str) -> List[EpisodeSegment]:
+    def _fallback_script(self, chunks: list[Chunk], style: str) -> list[EpisodeSegment]:
         """Create a deterministic, citation-carrying script without LLM if generation fails."""
         if not chunks:
             return [

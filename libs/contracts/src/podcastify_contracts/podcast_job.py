@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import List, Optional
+
 from pydantic import BaseModel, Field
 
 
@@ -14,16 +14,16 @@ class JobStatus(str, Enum):
 
 class Citation(BaseModel):
     source: str = Field(..., description="Source identifier, e.g., filename or doc id")
-    page: Optional[int] = Field(None, description="Page number if known")
-    snippet: Optional[str] = Field(None, description="Short supporting snippet")
+    page: int | None = Field(None, description="Page number if known")
+    snippet: str | None = Field(None, description="Short supporting snippet")
 
 
 class EpisodeSegment(BaseModel):
     title: str
     speaker: str = Field(default="Host")
     text: str
-    citations: List[Citation] = Field(default_factory=list)
-    voice: Optional[str] = Field(default=None, description="Optional voice/persona identifier for TTS.")
+    citations: list[Citation] = Field(default_factory=list)
+    voice: str | None = Field(default=None, description="Optional voice/persona identifier for TTS.")
 
 
 class EpisodeArtifact(BaseModel):
@@ -42,7 +42,7 @@ class PodcastJobRequest(BaseModel):
 class PodcastJobResult(BaseModel):
     job_id: str
     status: JobStatus
-    title: Optional[str] = None
-    segments: List[EpisodeSegment] = Field(default_factory=list)
-    artifacts: List[EpisodeArtifact] = Field(default_factory=list)
-    error: Optional[str] = None
+    title: str | None = None
+    segments: list[EpisodeSegment] = Field(default_factory=list)
+    artifacts: list[EpisodeArtifact] = Field(default_factory=list)
+    error: str | None = None

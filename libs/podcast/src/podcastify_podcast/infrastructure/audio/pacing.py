@@ -1,11 +1,11 @@
 from __future__ import annotations
 
+import json
 import math
 import os
 import re
 from collections import Counter
 from functools import lru_cache
-import json
 
 
 def segment_rate_multiplier(text: str) -> float:

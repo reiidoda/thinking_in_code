@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-import subprocess
-from pathlib import Path
-from typing import List
 import math
 import re
+import subprocess
+from pathlib import Path
 
 from podcastify_contracts.podcast_job import EpisodeSegment
+
 from podcastify_podcast.application.ports import TtsSynthesizer
 from podcastify_podcast.infrastructure.audio.pacing import segment_pause_multiplier_for
 
@@ -30,7 +30,7 @@ class PiperSynthesizer(TtsSynthesizer):
         self.math_silence_gain = math_silence_gain
         self.math_silence_ceiling = math_silence_ceiling
 
-    def synthesize(self, *, segments: List[EpisodeSegment], out_dir: str) -> list[str]:
+    def synthesize(self, *, segments: list[EpisodeSegment], out_dir: str) -> list[str]:
         out = Path(out_dir)
         out.mkdir(parents=True, exist_ok=True)
         paths: list[str] = []

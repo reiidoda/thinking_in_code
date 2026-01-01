@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from pathlib import Path
-from typing import List
 import math
 import re
+from pathlib import Path
 
 from podcastify_contracts.podcast_job import EpisodeSegment
+
 from podcastify_podcast.application.ports import TtsSynthesizer
 from podcastify_podcast.infrastructure.audio.pacing import segment_rate_multiplier_for
 
@@ -29,7 +29,7 @@ class Pyttsx3Synthesizer(TtsSynthesizer):
         self.math_rate_ceiling = math_rate_ceiling
         self.math_rate_beta = math_rate_beta
 
-    def synthesize(self, *, segments: List[EpisodeSegment], out_dir: str) -> list[str]:
+    def synthesize(self, *, segments: list[EpisodeSegment], out_dir: str) -> list[str]:
         try:
             import pyttsx3
         except Exception as e:  # pragma: no cover

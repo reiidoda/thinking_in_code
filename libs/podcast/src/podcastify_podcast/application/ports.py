@@ -1,37 +1,39 @@
 from __future__ import annotations
 
-from typing import Protocol, List
-from podcastify_contracts.podcast_job import EpisodeSegment
-from podcastify_podcast.domain.models import PageText, Chunk
 from pathlib import Path
+from typing import Protocol
+
+from podcastify_contracts.podcast_job import EpisodeSegment
+
+from podcastify_podcast.domain.models import Chunk, PageText
 
 
 class PdfExtractor(Protocol):
-    def extract(self, pdf_bytes: bytes) -> List[PageText]: ...
+    def extract(self, pdf_bytes: bytes) -> list[PageText]: ...
 
 
 class Chunker(Protocol):
-    def chunk(self, pages: List[PageText]) -> List[Chunk]:
+    def chunk(self, pages: list[PageText]) -> list[Chunk]:
         """Return list of chunk objects with citations."""
 
 
 class ScriptWriter(Protocol):
-    def write_script(self, *, chunks: List[Chunk], minutes: int, language: str, style: str) -> List[EpisodeSegment]: ...
+    def write_script(self, *, chunks: list[Chunk], minutes: int, language: str, style: str) -> list[EpisodeSegment]: ...
 
 
 class EmbeddingGenerator(Protocol):
-    def embed(self, texts: List[str]) -> List[List[float]]: ...
+    def embed(self, texts: list[str]) -> list[list[float]]: ...
 
 
 class VectorStore(Protocol):
-    def index(self, *, job_id: str, chunks: List[Chunk], embeddings: List[List[float]]) -> str: ...
+    def index(self, *, job_id: str, chunks: list[Chunk], embeddings: list[list[float]]) -> str: ...
     def query(
-        self, *, job_id: str, embedding: List[float], top_k: int = 4, min_score: float = 0.0, focus_pages: list[int] | None = None
-    ) -> List[tuple[Chunk, float]]: ...
+        self, *, job_id: str, embedding: list[float], top_k: int = 4, min_score: float = 0.0, focus_pages: list[int] | None = None
+    ) -> list[tuple[Chunk, float]]: ...
 
 
 class TtsSynthesizer(Protocol):
-    def synthesize(self, *, segments: List[EpisodeSegment], out_dir: str) -> list[str]:
+    def synthesize(self, *, segments: list[EpisodeSegment], out_dir: str) -> list[str]:
         """Return list of audio segment file paths."""
 
 

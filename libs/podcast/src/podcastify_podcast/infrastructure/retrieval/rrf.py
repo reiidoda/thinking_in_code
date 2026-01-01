@@ -2,12 +2,10 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import List, Tuple
-
-from rank_bm25 import BM25Okapi  # type: ignore
-from podcastify_podcast.infrastructure.text.overlap import token_set
 
 from podcastify_contracts.podcast_job import Citation
+from rank_bm25 import BM25Okapi  # type: ignore
+
 from podcastify_podcast.application.ports import EmbeddingGenerator, VectorStore
 from podcastify_podcast.domain.models import Chunk
 
@@ -20,7 +18,7 @@ class RrfRetriever:
         self.vector_store = vector_store
         self.base_dir = Path(base_dir)
 
-    def _load_chunks(self, job_id: str) -> List[Chunk]:
+    def _load_chunks(self, job_id: str) -> list[Chunk]:
         path = self.base_dir / job_id / "chunks.json"
         if not path.exists():
             return []
@@ -35,16 +33,16 @@ class RrfRetriever:
             )
         return chunks
 
-    def _bm25_scores(self, query: str, chunks: List[Chunk], top_k: int) -> List[Tuple[Chunk, float]]:
+    def _bm25_scores(self, query: str, chunks: list[Chunk], top_k: int) -> list[tuple[Chunk, float]]:
         if not chunks:
             return []
         corpus = [c.text.split() for c in chunks]
         bm25 = BM25Okapi(corpus)
         scores = bm25.get_scores(query.split())
-        ranked = sorted(zip(chunks, scores), key=lambda x: x[1], reverse=True)
+        ranked = sorted(zip(chunks, scores, strict=False), key=lambda x: x[1], reverse=True)
         return ranked[:top_k]
 
-    def run(self, *, job_id: str, query: str, top_k: int = 4, min_score: float = 0.0, focus_pages: list[int] | None = None) -> List[Tuple[Chunk, float]]:
+    def run(self, *, job_id: str, query: str, top_k: int = 4, min_score: float = 0.0, focus_pages: list[int] | None = None) -> list[tuple[Chunk, float]]:
         embedding = self.embedder.embed([query])[0]
         dense_results = self.vector_store.query(job_id=job_id, embedding=embedding, top_k=top_k, min_score=min_score, focus_pages=focus_pages)
 
@@ -59,9 +57,9 @@ class RrfRetriever:
         sparse_results = self._bm25_scores(query, chunks, top_k)
 
         # RRF fusion
-        fused: dict[str, Tuple[Chunk, float]] = {}
-        def add_results(results: List[Tuple[Chunk, float]], weight: float, rank_offset: float = 60.0):
-            for rank, (chunk, score) in enumerate(results, start=1):
+        fused: dict[str, tuple[Chunk, float]] = {}
+        def add_results(results: list[tuple[Chunk, float]], weight: float, rank_offset: float = 60.0):
+            for rank, (chunk, _score) in enumerate(results, start=1):
                 key = chunk.text[:80]
                 fused.setdefault(key, (chunk, 0.0))
                 fused[key] = (chunk, fused[key][1] + weight * (1.0 / (rank_offset + rank)))

@@ -1,7 +1,7 @@
 import json
-from podcastify_contracts.podcast_job import EpisodeSegment
-from podcastify_podcast.infrastructure.script.script_writer import OllamaScriptWriter
+
 from podcastify_podcast.domain.models import Chunk
+from podcastify_podcast.infrastructure.script.script_writer import OllamaScriptWriter
 
 
 class DummyGenerator:

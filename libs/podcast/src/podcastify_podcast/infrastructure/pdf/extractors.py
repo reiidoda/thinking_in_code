@@ -1,18 +1,21 @@
 from __future__ import annotations
 
+import math
+import os
 from io import BytesIO
-from typing import List
 
 from podcastify_podcast.application.ports import PdfExtractor
 from podcastify_podcast.domain.models import PageText
-from podcastify_podcast.infrastructure.text.normalize import clean_page_text, drop_repeated_headers_footers
-import math
-import os
+from podcastify_podcast.infrastructure.text.normalize import (
+    clean_page_text,
+    drop_repeated_headers_footers,
+)
+
 
 class PlaceholderPdfExtractor(PdfExtractor):
     """Replace with PyMuPDF/pdfplumber implementation in M1."""
 
-    def extract(self, pdf_bytes: bytes) -> List[PageText]:
+    def extract(self, pdf_bytes: bytes) -> list[PageText]:
         return [
             PageText(
                 page_number=1,
@@ -32,7 +35,7 @@ class PdfPlumberExtractor(PdfExtractor):
         self.source_name = source_name or "uploaded.pdf"
         self.min_chars = min_chars
 
-    def extract(self, pdf_bytes: bytes) -> List[PageText]:
+    def extract(self, pdf_bytes: bytes) -> list[PageText]:
         pages = self._extract_with_pdfplumber(pdf_bytes)
         total_chars = sum(len(p.text) for p in pages)
         if total_chars < self.min_chars:
@@ -50,7 +53,7 @@ class PdfPlumberExtractor(PdfExtractor):
             raise RuntimeError("No pages extracted from PDF.")
         return pages
 
-    def _extract_with_pdfplumber(self, pdf_bytes: bytes) -> List[PageText]:
+    def _extract_with_pdfplumber(self, pdf_bytes: bytes) -> list[PageText]:
         try:
             import pdfplumber
         except Exception as e:  # pragma: no cover - import/runtime errors
@@ -64,7 +67,7 @@ class PdfPlumberExtractor(PdfExtractor):
                 pages.append(PageText(page_number=idx, text=cleaned, source=self.source_name))
         return pages
 
-    def _extract_with_pymupdf(self, pdf_bytes: bytes) -> List[PageText]:
+    def _extract_with_pymupdf(self, pdf_bytes: bytes) -> list[PageText]:
         try:
             import fitz  # PyMuPDF
         except Exception as e:  # pragma: no cover
@@ -105,7 +108,7 @@ class TopicCorpusExtractor(PdfExtractor):
         self.top_k_files = top_k_files
         self.min_chars = min_chars
 
-    def extract(self, pdf_bytes: bytes) -> List[PageText]:  # pdf_bytes is ignored; corpus is on disk
+    def extract(self, pdf_bytes: bytes) -> list[PageText]:  # pdf_bytes is ignored; corpus is on disk
         topics = self._discover_topics()
         if not topics:
             raise RuntimeError(f"No topics found under {self.base_dir}")
@@ -149,7 +152,7 @@ class TopicCorpusExtractor(PdfExtractor):
             reverse=True,
         )
 
-    def _extract_pdf(self, path: str) -> List[PageText]:
+    def _extract_pdf(self, path: str) -> list[PageText]:
         with open(path, "rb") as f:
             data = f.read()
         return PdfPlumberExtractor(source_name=os.path.basename(path), min_chars=self.min_chars)._extract_with_pdfplumber(data)

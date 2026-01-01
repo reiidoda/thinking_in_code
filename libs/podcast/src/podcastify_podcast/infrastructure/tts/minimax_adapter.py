@@ -3,12 +3,13 @@ from __future__ import annotations
 import os
 import time
 from pathlib import Path
-import httpx
 
+import httpx
 from podcastify_contracts.podcast_job import EpisodeSegment
+
 from podcastify_podcast.application.ports import TtsSynthesizer
-from podcastify_podcast.infrastructure.logging import get_logger
 from podcastify_podcast.infrastructure.audio.pacing import segment_rate_multiplier_for
+from podcastify_podcast.infrastructure.logging import get_logger
 
 log = get_logger(__name__)
 

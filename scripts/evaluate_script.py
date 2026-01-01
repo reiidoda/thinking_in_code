@@ -8,12 +8,11 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
-from typing import List
 
 from podcastify_contracts.podcast_job import EpisodeSegment
 
 
-def score_segments(segments: List[EpisodeSegment], chunks: list[str] | None = None) -> dict:
+def score_segments(segments: list[EpisodeSegment], chunks: list[str] | None = None) -> dict:
     scores = {
         "has_hook": False,
         "has_recap": False,
@@ -53,7 +52,7 @@ def score_segments(segments: List[EpisodeSegment], chunks: list[str] | None = No
     return scores
 
 
-def load_segments(path: Path) -> List[EpisodeSegment]:
+def load_segments(path: Path) -> list[EpisodeSegment]:
     data = json.loads(path.read_text(encoding="utf-8"))
     segs = data.get("segments", data)
     return [EpisodeSegment.model_validate(s) for s in segs]

@@ -1,6 +1,9 @@
-from podcastify_podcast.infrastructure.text.normalize import clean_page_text, drop_repeated_headers_footers
-from podcastify_podcast.infrastructure.text.chunking import SentenceChunker
 from podcastify_podcast.domain.models import PageText
+from podcastify_podcast.infrastructure.text.chunking import SentenceChunker
+from podcastify_podcast.infrastructure.text.normalize import (
+    clean_page_text,
+    drop_repeated_headers_footers,
+)
 
 
 def test_clean_page_text_hyphenation_and_whitespace():

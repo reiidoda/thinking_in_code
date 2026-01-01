@@ -3,8 +3,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from pydub import AudioSegment
 import pyloudnorm as pyln  # type: ignore
+from pydub import AudioSegment
 
 
 class AudioQualityChecker:

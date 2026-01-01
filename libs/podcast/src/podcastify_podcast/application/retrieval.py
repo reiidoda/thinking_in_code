@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from podcastify_contracts.retrieval import RetrievalResult, RetrievedChunk
+
 from podcastify_podcast.application.ports import EmbeddingGenerator, VectorStore
 
 

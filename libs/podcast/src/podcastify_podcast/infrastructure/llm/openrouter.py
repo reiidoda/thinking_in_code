@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+
 import httpx
 from podcastify_podcast.infrastructure.logging import get_logger
 

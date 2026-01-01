@@ -6,16 +6,15 @@ import logging
 import os
 import uuid
 from collections import defaultdict
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from fastapi import Depends, FastAPI, File, Form, HTTPException, Request, UploadFile, Response
+from fastapi import Depends, FastAPI, File, Form, HTTPException, Request, Response, UploadFile
 from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
-
-from pydantic import BaseModel, Field, ValidationError
 from podcastify_contracts.podcast_job import JobStatus, PodcastJobRequest
+from pydantic import BaseModel, Field, ValidationError
 
 from podcastify_api.queue import enqueue_dir, enqueue_file, enqueue_redis
 
@@ -46,6 +45,7 @@ QUEUE_MODE = os.getenv("QUEUE_MODE", "dir").lower()
 QUEUE_REDIS_URL = os.getenv("QUEUE_REDIS_URL", "redis://localhost:6379/0")
 QUEUE_REDIS_KEY = os.getenv("QUEUE_REDIS_KEY", "podcastify:jobs")
 API_KEY = os.getenv("API_KEY", "")
+UPLOAD_FILE_PARAM = File(...)
 
 if STATIC_DIR.exists():
     app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
@@ -73,7 +73,7 @@ _init_logging()
 
 
 def _now_iso() -> str:
-    return datetime.now(timezone.utc).isoformat()
+    return datetime.now(UTC).isoformat()
 
 
 def _job_dir(job_id: str) -> Path:
@@ -213,53 +213,6 @@ def _audio_metrics() -> dict[str, Any]:
 
 class FeedbackPayload(BaseModel):
     message: str = Field(..., min_length=4, max_length=4000)
-    name: str | None = None
-    email: str | None = None
-    job_id: str | None = None
-    context: dict[str, Any] | None = None
-
-
-def _safe_artifact_path(job_id: str, artifact_name: str) -> Path:
-    job_dir = (PROCESSED_DIR / job_id).resolve()
-    candidate = (job_dir / artifact_name).resolve()
-    if job_dir not in candidate.parents and candidate != job_dir:
-        raise HTTPException(status_code=400, detail="Invalid artifact path")
-    if not candidate.exists() or not candidate.is_file():
-        raise HTTPException(status_code=404, detail="Artifact not found")
-    return candidate
-
-
-def _job_artifacts(job_id: str) -> list[dict[str, Any]]:
-    result_path = PROCESSED_DIR / job_id / "result.json"
-    result = _read_json(result_path)
-    if not result:
-        raise HTTPException(status_code=404, detail="Result not found")
-    artifacts: list[dict[str, Any]] = []
-    for artifact in result.get("artifacts", []):
-        if not isinstance(artifact, dict):
-            continue
-        raw_path = artifact.get("path")
-        if not isinstance(raw_path, str):
-            continue
-        name = Path(raw_path).name
-        try:
-            path = _safe_artifact_path(job_id, name)
-        except HTTPException:
-            continue
-        artifacts.append(
-            {
-                "name": name,
-                "kind": artifact.get("kind"),
-                "path": str(path),
-                "download_url": f"/v1/jobs/{job_id}/artifacts/{name}",
-                "size_bytes": path.stat().st_size,
-            }
-        )
-    return artifacts
-
-
-class FeedbackPayload(BaseModel):
-    message: str = Field(..., min_length=4, max_length=4000)
     name: str | None = Field(default=None, max_length=120)
     email: str | None = Field(default=None, max_length=200)
     job_id: str | None = Field(default=None, max_length=80)
@@ -320,7 +273,7 @@ def root() -> Response:
 
 @app.post("/v1/jobs", dependencies=[Depends(_require_api_key)])
 async def create_job(
-    file: UploadFile = File(...),
+    file: UploadFile = UPLOAD_FILE_PARAM,
     language: str = Form("en"),
     style: str = Form("everyday"),
     target_minutes: int = Form(8),

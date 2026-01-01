@@ -3,15 +3,18 @@ from __future__ import annotations
 import json
 import os
 import re
-from typing import List
 from pathlib import Path
 
-from podcastify_contracts.podcast_job import EpisodeSegment, Citation
+from podcastify_contracts.podcast_job import Citation, EpisodeSegment
 from podcastify_podcast.application.ports import ScriptWriter
-from podcastify_podcast.infrastructure.llm.ollama import OllamaTextGenerator
 from podcastify_podcast.domain.models import Chunk
-from podcastify_podcast.infrastructure.text.overlap import sentence_split, snippet_overlap, token_set
+from podcastify_podcast.infrastructure.llm.ollama import OllamaTextGenerator
 from podcastify_podcast.infrastructure.logging import get_logger
+from podcastify_podcast.infrastructure.text.overlap import (
+    sentence_split,
+    snippet_overlap,
+    token_set,
+)
 
 log = get_logger(__name__)
 
@@ -54,11 +57,11 @@ class OllamaScriptWriter(ScriptWriter):
     def write_script(
         self,
         *,
-        chunks: List[Chunk],
+        chunks: list[Chunk],
         minutes: float,
         language: str,
         style: str,
-    ) -> List[EpisodeSegment]:
+    ) -> list[EpisodeSegment]:
         system = _load_prompt("script_system.md")
         user = _load_prompt("script_user.md")
         domain_hint = self._domain_hint(style)
@@ -143,7 +146,7 @@ REFERENCE CONTEXT:
 
         return segments
 
-    def _parse_segments(self, raw: str) -> List[EpisodeSegment]:
+    def _parse_segments(self, raw: str) -> list[EpisodeSegment]:
         try:
             data = json.loads(self._extract_json(raw))
             segs = data.get("segments", data)
@@ -181,7 +184,7 @@ REFERENCE CONTEXT:
             return match.group(0)
         return raw
 
-    def _normalize_structure(self, segments: List[EpisodeSegment], chunks: List[Chunk]) -> List[EpisodeSegment]:
+    def _normalize_structure(self, segments: list[EpisodeSegment], chunks: list[Chunk]) -> list[EpisodeSegment]:
         """Guarantee a structured episode: Hook, 3–6 body segments, Recap, Takeaway."""
         cleaned: list[EpisodeSegment] = []
         for seg in segments:
@@ -245,7 +248,7 @@ REFERENCE CONTEXT:
             )
         return seg
 
-    def _fallback_segments(self, chunks: List[Chunk]) -> List[EpisodeSegment]:
+    def _fallback_segments(self, chunks: list[Chunk]) -> list[EpisodeSegment]:
         fallback_texts = [c.text for c in chunks[:4]] or ["This episode summarizes the research."]
         built: list[EpisodeSegment] = []
         built.append(EpisodeSegment(title="Hook", speaker="Host", text=fallback_texts[0], citations=[]))
@@ -255,7 +258,7 @@ REFERENCE CONTEXT:
         built.append(EpisodeSegment(title="Takeaway", speaker="Host", text="Key lesson for listeners.", citations=[]))
         return built
 
-    def _attach_citations(self, segments: List[EpisodeSegment], chunks: List[Chunk]) -> List[EpisodeSegment]:
+    def _attach_citations(self, segments: list[EpisodeSegment], chunks: list[Chunk]) -> list[EpisodeSegment]:
         """Attach citations by matching segment text to closest chunks."""
         if not chunks:
             return segments
@@ -288,7 +291,7 @@ REFERENCE CONTEXT:
             )
         return enriched
 
-    def _repair_citations(self, segments: List[EpisodeSegment], chunks: List[Chunk]) -> List[EpisodeSegment]:
+    def _repair_citations(self, segments: list[EpisodeSegment], chunks: list[Chunk]) -> list[EpisodeSegment]:
         """If a segment lacks citations, try to attach from best-matching chunk; otherwise, replace with evidence note."""
         if not chunks:
             return [
@@ -338,7 +341,7 @@ REFERENCE CONTEXT:
             )
         return repaired
 
-    def _retry_or_flag_segments(self, segments: List[EpisodeSegment], chunks: List[Chunk]) -> List[EpisodeSegment]:
+    def _retry_or_flag_segments(self, segments: list[EpisodeSegment], chunks: list[Chunk]) -> list[EpisodeSegment]:
         """If segments still have no citations, rebuild them from best chunk snippets."""
         if not chunks:
             return segments
@@ -363,7 +366,7 @@ REFERENCE CONTEXT:
             )
         return rebuilt
 
-    def _regenerate_low_evidence(self, segments: List[EpisodeSegment], chunks: List[Chunk], style: str) -> List[EpisodeSegment]:
+    def _regenerate_low_evidence(self, segments: list[EpisodeSegment], chunks: list[Chunk], style: str) -> list[EpisodeSegment]:
         """Second-pass regeneration for weakly supported segments using top chunks as context."""
         if not chunks or not any(c.citations for c in chunks):
             return segments
@@ -417,7 +420,7 @@ REFERENCE CONTEXT:
             return "Step-by-step with simple ratios/rules of thumb; keep formulas minimal and concrete."
         return "Keep it rigorous yet accessible; use formulas only when they clarify."
 
-    def _polish_sections(self, segments: List[EpisodeSegment], chunks: List[Chunk], style: str) -> List[EpisodeSegment]:
+    def _polish_sections(self, segments: list[EpisodeSegment], chunks: list[Chunk], style: str) -> list[EpisodeSegment]:
         """Rewrite sections (hook/body/recap/takeaway) with targeted prompts and best chunk context."""
         if not segments:
             return segments
@@ -456,7 +459,7 @@ REFERENCE CONTEXT:
 
         return polished
 
-    def _section_role(self, idx: int, segments: List[EpisodeSegment]) -> str:
+    def _section_role(self, idx: int, segments: list[EpisodeSegment]) -> str:
         if idx == 0:
             return "hook"
         if idx == len(segments) - 2:
@@ -465,7 +468,7 @@ REFERENCE CONTEXT:
             return "takeaway"
         return "body"
 
-    def _best_chunk_for_segment(self, seg: EpisodeSegment, chunks: List[Chunk]) -> Chunk | None:
+    def _best_chunk_for_segment(self, seg: EpisodeSegment, chunks: list[Chunk]) -> Chunk | None:
         if not chunks:
             return None
         try:
@@ -477,7 +480,7 @@ REFERENCE CONTEXT:
         best_idx = max(range(len(scores)), key=lambda i: scores[i])
         return chunks[best_idx]
 
-    def _clamp_lengths(self, segments: List[EpisodeSegment]) -> List[EpisodeSegment]:
+    def _clamp_lengths(self, segments: list[EpisodeSegment]) -> list[EpisodeSegment]:
         """Hard clamp lengths per section to keep pacing tight."""
         clamped: list[EpisodeSegment] = []
         for idx, seg in enumerate(segments):
@@ -508,7 +511,7 @@ REFERENCE CONTEXT:
             )
         return clamped
 
-    def _enforce_paragraph_citations(self, segments: List[EpisodeSegment], chunks: List[Chunk]) -> List[EpisodeSegment]:
+    def _enforce_paragraph_citations(self, segments: list[EpisodeSegment], chunks: list[Chunk]) -> list[EpisodeSegment]:
         """Ensure each paragraph is backed by at least one citation."""
         if not chunks:
             return segments
@@ -550,7 +553,7 @@ REFERENCE CONTEXT:
             )
         return enforced
 
-    def _paragraph_snippet_validation(self, segments: List[EpisodeSegment], chunks: List[Chunk]) -> List[EpisodeSegment]:
+    def _paragraph_snippet_validation(self, segments: list[EpisodeSegment], chunks: list[Chunk]) -> list[EpisodeSegment]:
         """Drop or flag paragraphs that do not meaningfully overlap any citation snippet."""
         if not chunks or not segments:
             return segments
@@ -644,7 +647,7 @@ REFERENCE CONTEXT:
 
         return validated
 
-    def _citation_audit_pass(self, segments: List[EpisodeSegment], chunks: List[Chunk], style: str) -> List[EpisodeSegment]:
+    def _citation_audit_pass(self, segments: list[EpisodeSegment], chunks: list[Chunk], style: str) -> list[EpisodeSegment]:
         """Second pass: force per-paragraph citations; drop paragraphs without clear support."""
         if not chunks or not segments:
             return segments
@@ -680,7 +683,7 @@ REFERENCE CONTEXT:
             )
         return audited
 
-    def _inline_citation_enforcer(self, segments: List[EpisodeSegment], chunks: List[Chunk]) -> List[EpisodeSegment]:
+    def _inline_citation_enforcer(self, segments: list[EpisodeSegment], chunks: list[Chunk]) -> list[EpisodeSegment]:
         """Ensure each paragraph carries an inline page citation; inject and validate against known pages/snippets."""
         if not chunks:
             return segments
@@ -770,7 +773,7 @@ REFERENCE CONTEXT:
                 return "Deliver one actionable step and a quick heuristic."
         return "Keep it rigorous yet accessible; favor one memorable analogy and a concise, explained formula."
 
-    def _fact_check_segments(self, segments: List[EpisodeSegment], chunks: List[Chunk]) -> List[EpisodeSegment]:
+    def _fact_check_segments(self, segments: list[EpisodeSegment], chunks: list[Chunk]) -> list[EpisodeSegment]:
         """Drop sentences with no overlap; flag low-support ones."""
         if not chunks:
             return segments

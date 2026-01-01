@@ -1,11 +1,10 @@
 from __future__ import annotations
 
 import json
-import math
 from pathlib import Path
-from typing import List, Tuple
 
 from podcastify_contracts.podcast_job import Citation
+
 from podcastify_podcast.application.ports import VectorStore
 from podcastify_podcast.domain.models import Chunk
 
@@ -25,7 +24,7 @@ class FaissVectorStore(VectorStore):
     def _meta_path(self, job_id: str) -> Path:
         return self._job_dir(job_id) / "faiss_meta.json"
 
-    def index(self, *, job_id: str, chunks: List[Chunk], embeddings: List[List[float]]) -> str:
+    def index(self, *, job_id: str, chunks: list[Chunk], embeddings: list[list[float]]) -> str:
         if len(chunks) != len(embeddings):
             raise ValueError("Embeddings and chunks must have same length.")
 
@@ -61,8 +60,8 @@ class FaissVectorStore(VectorStore):
         return str(self._index_path(job_id))
 
     def query(
-        self, *, job_id: str, embedding: List[float], top_k: int = 4, min_score: float = 0.0, focus_pages: list[int] | None = None
-    ) -> List[Tuple[Chunk, float]]:
+        self, *, job_id: str, embedding: list[float], top_k: int = 4, min_score: float = 0.0, focus_pages: list[int] | None = None
+    ) -> list[tuple[Chunk, float]]:
         try:
             import faiss  # type: ignore
             import numpy as np
@@ -82,8 +81,8 @@ class FaissVectorStore(VectorStore):
         vec = np.array([embedding], dtype="float32")
         vec = vec / (np.linalg.norm(vec, axis=1, keepdims=True) + 1e-9)
         scores, idxs = index.search(vec, min(top_k * 4, len(meta)))
-        results: list[Tuple[Chunk, float]] = []
-        for score, idx in zip(scores[0], idxs[0]):
+        results: list[tuple[Chunk, float]] = []
+        for score, idx in zip(scores[0], idxs[0], strict=False):
             if idx < 0 or idx >= len(meta):
                 continue
             item = meta[idx]
@@ -99,7 +98,7 @@ class FaissVectorStore(VectorStore):
             pages = {c.page for c in chunk.citations if c.page}
             return bool(pages & set(focus_pages))
 
-        def rerank_key(item: Tuple[Chunk, float]) -> tuple:
+        def rerank_key(item: tuple[Chunk, float]) -> tuple:
             chunk, score = item
             math_bonus = _math_token_count(chunk.text)
             cite_pages = len([c for c in chunk.citations if c.page])

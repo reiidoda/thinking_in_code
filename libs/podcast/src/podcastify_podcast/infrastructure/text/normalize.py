@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import re
 from collections import Counter
-from typing import List
 
 from podcastify_podcast.domain.models import PageText
+
 
 def fix_hyphenation(text: str) -> str:
     # Remove line-break hyphenation (e.g., "tech-\nniques" -> "techniques")
@@ -43,7 +43,7 @@ def clean_page_text(raw: str) -> str:
         deduped.append(ln)
     return "\n".join(deduped)
 
-def drop_repeated_headers_footers(pages: List[PageText], *, min_repeats: int = 2) -> List[PageText]:
+def drop_repeated_headers_footers(pages: list[PageText], *, min_repeats: int = 2) -> list[PageText]:
     """Remove page headers/footers that repeat across pages (simple heuristic)."""
     if len(pages) < min_repeats:
         return pages
@@ -63,7 +63,7 @@ def drop_repeated_headers_footers(pages: List[PageText], *, min_repeats: int = 2
     footer_lines = {line for line, count in footer_counts.items() if count >= min_repeats and len(line) <= 120}
 
     cleaned_pages: list[PageText] = []
-    for p, lines in zip(pages, split_lines):
+    for p, lines in zip(pages, split_lines, strict=False):
         filtered: list[str] = []
         for idx, line in enumerate(lines):
             is_header = idx == 0 and line in header_lines

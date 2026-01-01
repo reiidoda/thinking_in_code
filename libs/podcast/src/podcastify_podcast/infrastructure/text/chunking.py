@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 import re
-from typing import List
+
 from podcastify_contracts.podcast_job import Citation
 from podcastify_podcast.application.ports import Chunker
-from podcastify_podcast.domain.models import PageText, Chunk
+from podcastify_podcast.domain.models import Chunk, PageText
 
 
 class SentenceChunker(Chunker):
@@ -18,8 +18,8 @@ class SentenceChunker(Chunker):
         # Lightweight sentence splitter to avoid external deps.
         return [s.strip() for s in re.split(r"(?<=[.!?])\s+(?=[A-Z0-9])", text) if s.strip()]
 
-    def chunk(self, pages: List[PageText]) -> List[Chunk]:
-        chunks: List[Chunk] = []
+    def chunk(self, pages: list[PageText]) -> list[Chunk]:
+        chunks: list[Chunk] = []
         buffer: list[str] = []
         citations: list[Citation] = []
         current_len = 0

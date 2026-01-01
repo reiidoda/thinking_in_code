@@ -2,9 +2,10 @@ from __future__ import annotations
 
 import json
 import logging
-from contextvars import ContextVar
-from rich.logging import RichHandler
 import os
+from contextvars import ContextVar
+
+from rich.logging import RichHandler
 
 _corr_id: ContextVar[str | None] = ContextVar("corr_id", default=None)
 
@@ -61,10 +62,10 @@ def maybe_init_tracing(service_name: str) -> None:  # pragma: no cover - optiona
         return
     try:
         from opentelemetry import trace
+        from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
         from opentelemetry.sdk.resources import Resource
         from opentelemetry.sdk.trace import TracerProvider
         from opentelemetry.sdk.trace.export import BatchSpanProcessor
-        from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
     except Exception:
         return
 

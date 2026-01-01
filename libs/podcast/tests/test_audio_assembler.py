@@ -6,7 +6,6 @@ import types
 from pathlib import Path
 
 import pytest
-
 from podcastify_podcast.infrastructure.audio.pydub_assembler import PydubAudioAssembler
 
 
@@ -20,32 +19,32 @@ class DummyAudioSegment:
     def duration_seconds(self) -> float:
         return self.duration_ms / 1000.0
 
-    def __add__(self, other: "DummyAudioSegment") -> "DummyAudioSegment":
+    def __add__(self, other: DummyAudioSegment) -> DummyAudioSegment:
         return DummyAudioSegment(self.duration_ms + other.duration_ms, self.dBFS, self.max_dBFS)
 
-    def __iadd__(self, other: "DummyAudioSegment") -> "DummyAudioSegment":
+    def __iadd__(self, other: DummyAudioSegment) -> DummyAudioSegment:
         self.duration_ms += other.duration_ms
         return self
 
     @classmethod
-    def silent(cls, duration: int) -> "DummyAudioSegment":
+    def silent(cls, duration: int) -> DummyAudioSegment:
         return cls(duration_ms=duration)
 
     @classmethod
-    def from_file(cls, path: str) -> "DummyAudioSegment":
+    def from_file(cls, path: str) -> DummyAudioSegment:
         return cls(duration_ms=1000)
 
-    def fade_in(self, ms: int) -> "DummyAudioSegment":
+    def fade_in(self, ms: int) -> DummyAudioSegment:
         return self
 
-    def fade_out(self, ms: int) -> "DummyAudioSegment":
+    def fade_out(self, ms: int) -> DummyAudioSegment:
         return self
 
-    def apply_gain(self, gain: float) -> "DummyAudioSegment":
+    def apply_gain(self, gain: float) -> DummyAudioSegment:
         self.dBFS += gain
         return self
 
-    def limit(self, threshold: float) -> "DummyAudioSegment":
+    def limit(self, threshold: float) -> DummyAudioSegment:
         self.max_dBFS = min(self.max_dBFS, threshold)
         return self
 

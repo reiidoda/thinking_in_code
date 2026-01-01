@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import List, Tuple
 
 from podcastify_contracts.podcast_job import Citation
+
 from podcastify_podcast.application.ports import VectorStore
 from podcastify_podcast.domain.models import Chunk
 
@@ -28,7 +28,7 @@ class ChromaVectorStore(VectorStore):
         coll = client.get_or_create_collection(name=f"{self.collection_prefix}_{job_id}")
         return client, coll
 
-    def index(self, *, job_id: str, chunks: List[Chunk], embeddings: List[List[float]]) -> str:
+    def index(self, *, job_id: str, chunks: list[Chunk], embeddings: list[list[float]]) -> str:
         if len(chunks) != len(embeddings):
             raise ValueError("Embeddings and chunks must have same length.")
         _, coll = self._client_and_collection(job_id)
@@ -44,17 +44,17 @@ class ChromaVectorStore(VectorStore):
         return str(self.base_dir / job_id / "chroma")
 
     def query(
-        self, *, job_id: str, embedding: List[float], top_k: int = 4, min_score: float = 0.0, focus_pages: list[int] | None = None
-    ) -> List[Tuple[Chunk, float]]:
+        self, *, job_id: str, embedding: list[float], top_k: int = 4, min_score: float = 0.0, focus_pages: list[int] | None = None
+    ) -> list[tuple[Chunk, float]]:
         _, coll = self._client_and_collection(job_id)
         res = coll.query(query_embeddings=[embedding], n_results=top_k)
 
-        results: list[Tuple[Chunk, float]] = []
+        results: list[tuple[Chunk, float]] = []
         docs = res.get("documents", [[]])[0] if res else []
         metas = res.get("metadatas", [[]])[0] if res else []
         distances = res.get("distances", [[]])[0] if res else []
 
-        for doc, meta, dist in zip(docs, metas, distances):
+        for doc, meta, dist in zip(docs, metas, distances, strict=False):
             # Chroma returns distance; convert to similarity (1 - distance) if possible.
             score = 1 - float(dist) if dist is not None else 0.0
             if score < min_score:

@@ -3,14 +3,19 @@ from __future__ import annotations
 import json
 import os
 import time
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 from podcastify_contracts.podcast_job import JobStatus, PodcastJobRequest, PodcastJobResult
 from podcastify_podcast.application.use_cases import GeneratePodcastFromPdf
 from podcastify_podcast.infrastructure.audio.pydub_assembler import PydubAudioAssembler
-from podcastify_podcast.infrastructure.embedding.sentence_transformers import SentenceTransformersEmbedder
-from podcastify_podcast.infrastructure.llm.ollama import OllamaEmbeddingGenerator, OllamaTextGenerator
+from podcastify_podcast.infrastructure.embedding.sentence_transformers import (
+    SentenceTransformersEmbedder,
+)
+from podcastify_podcast.infrastructure.llm.ollama import (
+    OllamaEmbeddingGenerator,
+    OllamaTextGenerator,
+)
 from podcastify_podcast.infrastructure.llm.openrouter import OpenRouterTextGenerator
 from podcastify_podcast.infrastructure.logging import (
     clear_correlation_id,
@@ -27,7 +32,10 @@ from podcastify_podcast.infrastructure.metrics import (
     observe_stage,
     set_queue_depth,
 )
-from podcastify_podcast.infrastructure.pdf.extractors import PdfPlumberExtractor, TopicCorpusExtractor
+from podcastify_podcast.infrastructure.pdf.extractors import (
+    PdfPlumberExtractor,
+    TopicCorpusExtractor,
+)
 from podcastify_podcast.infrastructure.retrieval.chroma_store import ChromaVectorStore
 from podcastify_podcast.infrastructure.retrieval.faiss_store import FaissVectorStore
 from podcastify_podcast.infrastructure.retrieval.local_store import LocalVectorStore
@@ -40,9 +48,12 @@ from podcastify_podcast.infrastructure.tts.minimax_adapter import MinimaxSynthes
 from podcastify_podcast.infrastructure.tts.piper_adapter import PiperSynthesizer
 from podcastify_podcast.infrastructure.tts.pyttsx3_adapter import Pyttsx3Synthesizer
 
-from podcastify_worker.dir_queue import dequeue as dir_dequeue, queue_depth as dir_queue_depth
-from podcastify_worker.file_queue import dequeue as file_dequeue, queue_depth as file_queue_depth
-from podcastify_worker.redis_queue import dequeue as redis_dequeue, queue_depth as redis_queue_depth
+from podcastify_worker.dir_queue import dequeue as dir_dequeue
+from podcastify_worker.dir_queue import queue_depth as dir_queue_depth
+from podcastify_worker.file_queue import dequeue as file_dequeue
+from podcastify_worker.file_queue import queue_depth as file_queue_depth
+from podcastify_worker.redis_queue import dequeue as redis_dequeue
+from podcastify_worker.redis_queue import queue_depth as redis_queue_depth
 
 log = get_logger("podcastify_worker")
 
@@ -122,7 +133,7 @@ def _parse_int_map_env(name: str) -> dict[str, int]:
 
 
 def _now_iso() -> str:
-    return datetime.now(timezone.utc).isoformat()
+    return datetime.now(UTC).isoformat()
 
 
 def _write_status(

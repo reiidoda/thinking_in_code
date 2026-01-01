@@ -1,14 +1,13 @@
 from __future__ import annotations
 
 import json
-from typing import List
 
-from podcastify_contracts.podcast_job import EpisodeSegment, Citation
+from podcastify_contracts.podcast_job import EpisodeSegment
 from podcastify_podcast.application.ports import ScriptWriter
 from podcastify_podcast.domain.models import Chunk
 from podcastify_podcast.infrastructure.llm.openrouter import OpenRouterTextGenerator
-from podcastify_podcast.infrastructure.script.script_writer import _load_prompt, sentence_split
 from podcastify_podcast.infrastructure.logging import get_logger
+from podcastify_podcast.infrastructure.script.script_writer import _load_prompt
 
 log = get_logger(__name__)
 
@@ -22,11 +21,11 @@ class OpenRouterScriptWriter(ScriptWriter):
     def write_script(
         self,
         *,
-        chunks: List[Chunk],
+        chunks: list[Chunk],
         minutes: float,
         language: str,
         style: str,
-    ) -> List[EpisodeSegment]:
+    ) -> list[EpisodeSegment]:
         system = _load_prompt("script_system.md")
         user = _load_prompt("script_user.md")
 
@@ -78,6 +77,6 @@ REFERENCE CONTEXT:
         match = re.search(r"\{.*\}|\[.*\]", raw, re.S)
         return match.group(0) if match else raw
 
-    def _fallback(self, chunks: List[Chunk]) -> List[EpisodeSegment]:
+    def _fallback(self, chunks: list[Chunk]) -> list[EpisodeSegment]:
         text = " ".join(c.text for c in chunks[:3]) or "Podcast episode."
         return [EpisodeSegment(title="Episode", speaker="Host", text=text, citations=[])]

@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import List
-
 from podcastify_podcast.application.ports import EmbeddingGenerator
 
 
@@ -18,7 +16,7 @@ class SentenceTransformersEmbedder(EmbeddingGenerator):
 
         self.model = SentenceTransformer(model_name, device=device)
 
-    def embed(self, texts: List[str]) -> List[List[float]]:
+    def embed(self, texts: list[str]) -> list[list[float]]:
         # sentence-transformers returns numpy.ndarray; convert to list for serialization
         embeddings = self.model.encode(texts, normalize_embeddings=True)
         return [vec.tolist() for vec in embeddings]

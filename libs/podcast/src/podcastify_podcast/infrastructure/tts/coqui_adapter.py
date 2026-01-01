@@ -3,9 +3,9 @@ from __future__ import annotations
 import subprocess
 import tempfile
 from pathlib import Path
-from typing import List
 
 from podcastify_contracts.podcast_job import EpisodeSegment
+
 from podcastify_podcast.application.ports import TtsSynthesizer
 from podcastify_podcast.infrastructure.audio.pacing import segment_rate_multiplier_for
 
@@ -25,7 +25,7 @@ class CoquiSynthesizer(TtsSynthesizer):
         self.speed = speed
         self.speaker_map = speaker_map or {}
 
-    def synthesize(self, *, segments: List[EpisodeSegment], out_dir: str) -> list[str]:
+    def synthesize(self, *, segments: list[EpisodeSegment], out_dir: str) -> list[str]:
         out = Path(out_dir)
         out.mkdir(parents=True, exist_ok=True)
         paths: list[str] = []

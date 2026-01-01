@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from typing import List
 from pydantic import BaseModel, Field
 
 from podcastify_contracts.podcast_job import Citation
@@ -15,11 +14,11 @@ class RetrievalQuery(BaseModel):
 
 class RetrievedChunk(BaseModel):
     text: str
-    citations: List[Citation] = Field(default_factory=list)
+    citations: list[Citation] = Field(default_factory=list)
     score: float = Field(..., description="Cosine similarity score.")
 
 
 class RetrievalResult(BaseModel):
     job_id: str
     query: str
-    results: List[RetrievedChunk] = Field(default_factory=list)
+    results: list[RetrievedChunk] = Field(default_factory=list)

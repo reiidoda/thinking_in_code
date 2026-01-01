@@ -3,12 +3,14 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
-
 from podcastify_contracts.errors import PipelineError
 from podcastify_contracts.podcast_job import Citation, EpisodeSegment, JobStatus, PodcastJobRequest
 from podcastify_podcast.application.use_cases import GeneratePodcastFromPdf
 from podcastify_podcast.domain.models import Chunk, PageText
-from podcastify_podcast.infrastructure.audio.pacing import segment_pause_multiplier, segment_rate_multiplier
+from podcastify_podcast.infrastructure.audio.pacing import (
+    segment_pause_multiplier,
+    segment_rate_multiplier,
+)
 from podcastify_podcast.infrastructure.storage.fs_store import FileSystemJobStore
 
 
