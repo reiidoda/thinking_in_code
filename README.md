@@ -1,4 +1,6 @@
 # <img src="assets/thinking_in_code_icon.png" alt="Thinking in Code" width="28" style="vertical-align:middle; border-radius:6px;" /> Thinking in Code
+[![CI](https://github.com/reiidoda/thinking_in_code/actions/workflows/ci.yml/badge.svg)](https://github.com/reiidoda/thinking_in_code/actions/workflows/ci.yml) [![Python](https://img.shields.io/badge/python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/) [![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/) [![Pydantic](https://img.shields.io/badge/Pydantic-1f2937?logo=pydantic&logoColor=white)](https://docs.pydantic.dev/) [![Redis](https://img.shields.io/badge/redis-DC382D?logo=redis&logoColor=white)](https://redis.io/)
+[![Docker](https://img.shields.io/badge/docker-enabled-2496ED?logo=docker&logoColor=white)](https://www.docker.com/) [![Docker%20Compose](https://img.shields.io/badge/docker%20compose-2496ED?logo=docker&logoColor=white)](https://docs.docker.com/compose/) [![License: MIT](https://img.shields.io/github/license/reiidoda/thinking_in_code)](LICENSE)
 
 <img src="assets/thinking_in_code.png" alt="Thinking in Code" width="100%" />
 
